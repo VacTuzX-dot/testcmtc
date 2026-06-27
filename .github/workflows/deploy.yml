@@ -26,9 +26,12 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             if [ -d ~/app/.git ]; then
+              git -C ~/app remote set-url origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
               git -C ~/app pull
+              git -C ~/app remote set-url origin https://github.com/${{ github.repository }}.git
             else
-              git clone https://github.com/${{ github.repository }}.git ~/app
+              git clone https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git ~/app
+              git -C ~/app remote set-url origin https://github.com/${{ github.repository }}.git
             fi
             cd ~/app
             docker compose up -d --build
