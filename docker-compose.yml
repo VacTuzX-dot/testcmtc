@@ -3,6 +3,8 @@ services:
     build: .
     container_name: student01_web
     restart: unless-stopped
+    ports:
+      - "9834:80"
     labels:
       - traefik.enable=true
       - traefik.http.routers.student01.rule=Host(`student01-lab.cmtc.ac.th`)
