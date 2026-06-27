@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
       rel="stylesheet"
     />
     <style>
@@ -153,6 +153,11 @@
       .card-icon svg {
         width: 18px;
         height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
       }
 
       .card-icon.purple {
@@ -287,14 +292,7 @@
       <div class="card" data-accent="purple">
         <div class="card-header">
           <div class="card-icon purple">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+            <svg viewBox="0 0 24 24">
               <path
                 d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
               />
@@ -319,14 +317,7 @@
       <div class="card" data-accent="blue">
         <div class="card-header">
           <div class="card-icon blue">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+            <svg viewBox="0 0 24 24">
               <polygon points="12 2 2 7 12 12 22 7 12 2" />
               <polyline points="2 17 12 22 22 17" />
               <polyline points="2 12 12 17 22 12" />
@@ -349,14 +340,7 @@
       <div class="card" data-accent="pink">
         <div class="card-header">
           <div class="card-icon pink">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+            <svg viewBox="0 0 24 24">
               <line x1="6" y1="3" x2="6" y2="15" />
               <circle cx="18" cy="6" r="3" />
               <circle cx="6" cy="18" r="3" />
@@ -380,14 +364,7 @@
       <div class="card" data-accent="mint">
         <div class="card-header">
           <div class="card-icon mint">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+            <svg viewBox="0 0 24 24">
               <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
               <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
               <line x1="6" y1="6" x2="6.01" y2="6" />
@@ -410,14 +387,7 @@
       <div class="card" data-accent="peach">
         <div class="card-header">
           <div class="card-icon peach">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+            <svg viewBox="0 0 24 24">
               <polyline points="21 8 21 21 3 21 3 8" />
               <rect x="1" y="3" width="22" height="5" />
               <line x1="10" y1="12" x2="14" y2="12" />
@@ -439,14 +409,7 @@
       <div class="card" data-accent="yellow">
         <div class="card-header">
           <div class="card-icon yellow">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+            <svg viewBox="0 0 24 24">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
           </div>
@@ -467,15 +430,15 @@
     <footer>
       <div class="legend">
         <span class="legend-item">
-          <span class="legend-dot" style="background: var(--done)"></span>
+          <span class="legend-dot" style="background: var(--done)">&#8203;</span>
           Done
         </span>
         <span class="legend-item">
-          <span class="legend-dot" style="background: var(--active)"></span>
+          <span class="legend-dot" style="background: var(--active)">&#8203;</span>
           In Progress
         </span>
         <span class="legend-item">
-          <span class="legend-dot" style="background: var(--todo)"></span>
+          <span class="legend-dot" style="background: var(--todo)">&#8203;</span>
           Planned
         </span>
       </div>
