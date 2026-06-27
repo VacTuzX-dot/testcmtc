@@ -1,0 +1,14 @@
+services:
+  web:
+    build: .
+    container_name: student01_web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.student01.rule=Host(`student01-lab.cmtc.ac.th`)
+      - traefik.http.services.student01.loadbalancer.server.port=80
+    networks:
+      - web
+
+networks:
+  web:
+    external: true

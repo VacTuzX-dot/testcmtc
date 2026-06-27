@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevOps Subject Test — CMTC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #f7f5ff;
+        --card: #ffffff;
+        --border: #ede9fe;
+        --text: #1e1b4b;
+        --muted: #6b7280;
+        --shadow:
+          0 4px 24px rgba(167, 139, 250, 0.1),
+          0 1px 4px rgba(167, 139, 250, 0.08);
+        --radius: 16px;
+
+        --purple: #a78bfa;
+        --blue: #93c5fd;
+        --pink: #f9a8d4;
+        --mint: #6ee7b7;
+        --peach: #fca5a5;
+        --yellow: #fde68a;
+
+        --done: #6ee7b7;
+        --active: #fdba74;
+        --todo: #ddd6fe;
+      }
+
+      body {
+        font-family:
+          "Plus Jakarta Sans",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: var(--bg);
+        background-image: radial-gradient(
+          ellipse 80% 50% at 50% -10%,
+          rgba(196, 181, 253, 0.3),
+          transparent
+        );
+        color: var(--text);
+        min-height: 100vh;
+        padding: 2.5rem 1.5rem;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+
+      header h1 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        background: linear-gradient(
+          135deg,
+          #7c3aed 0%,
+          #6366f1 40%,
+          #2563eb 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.03em;
+        line-height: 1.2;
+      }
+
+      header p {
+        color: var(--muted);
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 1.25rem;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        border-top: 3px solid transparent;
+        transition:
+          box-shadow 200ms ease,
+          transform 200ms ease;
+      }
+
+      .card:hover {
+        box-shadow:
+          0 8px 32px rgba(167, 139, 250, 0.15),
+          0 2px 8px rgba(167, 139, 250, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .card[data-accent="purple"] {
+        border-top-color: var(--purple);
+      }
+      .card[data-accent="blue"] {
+        border-top-color: var(--blue);
+      }
+      .card[data-accent="pink"] {
+        border-top-color: var(--pink);
+      }
+      .card[data-accent="mint"] {
+        border-top-color: var(--mint);
+      }
+      .card[data-accent="peach"] {
+        border-top-color: var(--peach);
+      }
+      .card[data-accent="yellow"] {
+        border-top-color: var(--yellow);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        margin-bottom: 1rem;
+      }
+
+      .card-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .card-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .card-icon.purple {
+        background: #ede9fe;
+        color: #7c3aed;
+      }
+      .card-icon.blue {
+        background: #dbeafe;
+        color: #2563eb;
+      }
+      .card-icon.pink {
+        background: #fce7f3;
+        color: #be185d;
+      }
+      .card-icon.mint {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .card-icon.peach {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+      .card-icon.yellow {
+        background: #fef9c3;
+        color: #854d0e;
+      }
+
+      .card-title-group {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+      }
+
+      .card h2 {
+        font-size: 0.9375rem;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: -0.01em;
+      }
+
+      .badge {
+        font-size: 0.6875rem;
+        padding: 0.2rem 0.55rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        white-space: nowrap;
+        letter-spacing: 0.01em;
+      }
+
+      .badge.purple {
+        background: #ede9fe;
+        color: #5b21b6;
+      }
+      .badge.yellow {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .badge.gray {
+        background: #f3f4f6;
+        color: #6b7280;
+      }
+
+      .card ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+      }
+
+      .card ul li {
+        font-size: 0.8125rem;
+        color: #4b5563;
+        padding: 0.3rem 0.625rem;
+        background: #fafafa;
+        border-radius: 8px;
+        border-left: 3px solid var(--todo);
+        font-weight: 500;
+      }
+
+      .card ul li.done {
+        border-left-color: var(--done);
+        background: #f0fdf4;
+        color: #166534;
+      }
+
+      .card ul li.active {
+        border-left-color: var(--active);
+        background: #fffbeb;
+        color: #92400e;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 3rem;
+        color: var(--muted);
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .legend {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.25rem;
+        flex-wrap: wrap;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+      }
+
+      .legend-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>DevOps Subject Testing</h1>
+      <p>CMTC · Container &amp; CI/CD Lab Environment</p>
+    </header>
+
+    <div class="grid">
+      <div class="card" data-accent="purple">
+        <div class="card-header">
+          <div class="card-icon purple">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+              />
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+              <line x1="12" y1="22.08" x2="12" y2="12" />
+            </svg>
+          </div>
+          <div class="card-title-group">
+            <h2>Docker</h2>
+            <span class="badge purple">Active</span>
+          </div>
+        </div>
+        <ul>
+          <li class="done">Build image from Dockerfile</li>
+          <li class="done">Run container (detach mode)</li>
+          <li class="done">Port mapping (-p)</li>
+          <li class="active">Multi-stage build</li>
+          <li class="todo">Health check</li>
+        </ul>
+      </div>
+
+      <div class="card" data-accent="blue">
+        <div class="card-header">
+          <div class="card-icon blue">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polygon points="12 2 2 7 12 12 22 7 12 2" />
+              <polyline points="2 17 12 22 22 17" />
+              <polyline points="2 12 12 17 22 12" />
+            </svg>
+          </div>
+          <div class="card-title-group">
+            <h2>Docker Compose</h2>
+            <span class="badge yellow">In Progress</span>
+          </div>
+        </div>
+        <ul>
+          <li class="done">Define services</li>
+          <li class="done">Network bridge</li>
+          <li class="active">Volume mounts</li>
+          <li class="active">Environment variables</li>
+          <li class="todo">Compose watch</li>
+        </ul>
+      </div>
+
+      <div class="card" data-accent="pink">
+        <div class="card-header">
+          <div class="card-icon pink">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="6" y1="3" x2="6" y2="15" />
+              <circle cx="18" cy="6" r="3" />
+              <circle cx="6" cy="18" r="3" />
+              <path d="M18 9a9 9 0 0 1-9 9" />
+            </svg>
+          </div>
+          <div class="card-title-group">
+            <h2>CI/CD Pipeline</h2>
+            <span class="badge gray">Planned</span>
+          </div>
+        </div>
+        <ul>
+          <li class="todo">GitHub Actions workflow</li>
+          <li class="todo">Build &amp; push to registry</li>
+          <li class="todo">Deploy to staging</li>
+          <li class="todo">Smoke test gate</li>
+          <li class="todo">Deploy to prod</li>
+        </ul>
+      </div>
+
+      <div class="card" data-accent="mint">
+        <div class="card-header">
+          <div class="card-icon mint">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+              <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+              <line x1="6" y1="6" x2="6.01" y2="6" />
+              <line x1="6" y1="18" x2="6.01" y2="18" />
+            </svg>
+          </div>
+          <div class="card-title-group">
+            <h2>Nginx / Reverse Proxy</h2>
+            <span class="badge yellow">In Progress</span>
+          </div>
+        </div>
+        <ul>
+          <li class="done">Serve static files</li>
+          <li class="active">Proxy pass to app container</li>
+          <li class="todo">SSL / TLS (Let's Encrypt)</li>
+          <li class="todo">Rate limiting config</li>
+        </ul>
+      </div>
+
+      <div class="card" data-accent="peach">
+        <div class="card-header">
+          <div class="card-icon peach">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="21 8 21 21 3 21 3 8" />
+              <rect x="1" y="3" width="22" height="5" />
+              <line x1="10" y1="12" x2="14" y2="12" />
+            </svg>
+          </div>
+          <div class="card-title-group">
+            <h2>Container Registry</h2>
+            <span class="badge gray">Planned</span>
+          </div>
+        </div>
+        <ul>
+          <li class="todo">Docker Hub push</li>
+          <li class="todo">GHCR (GitHub Container Registry)</li>
+          <li class="todo">Image tagging strategy</li>
+          <li class="todo">Image scan (Trivy)</li>
+        </ul>
+      </div>
+
+      <div class="card" data-accent="yellow">
+        <div class="card-header">
+          <div class="card-icon yellow">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
+          </div>
+          <div class="card-title-group">
+            <h2>Monitoring</h2>
+            <span class="badge gray">Planned</span>
+          </div>
+        </div>
+        <ul>
+          <li class="todo">Prometheus scrape config</li>
+          <li class="todo">Grafana dashboard</li>
+          <li class="todo">Container log aggregation</li>
+          <li class="todo">Alerting rule</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer>
+      <div class="legend">
+        <span class="legend-item">
+          <span class="legend-dot" style="background: var(--done)"></span>
+          Done
+        </span>
+        <span class="legend-item">
+          <span class="legend-dot" style="background: var(--active)"></span>
+          In Progress
+        </span>
+        <span class="legend-item">
+          <span class="legend-dot" style="background: var(--todo)"></span>
+          Planned
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>
