@@ -2,6 +2,7 @@ services:
   web:
     build: .
     container_name: student01_web
+    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.routers.student01.rule=Host(`student01-lab.cmtc.ac.th`)

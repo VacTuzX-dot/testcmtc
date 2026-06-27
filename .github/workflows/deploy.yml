@@ -15,7 +15,7 @@ jobs:
       - name: Test - validate HTML
         run: |
           sudo apt-get update && sudo apt-get install -y tidy
-          tidy -q -e index.html || true
+          tidy -q -e index.html
 
       # ---------- DEPLOY ----------
       - name: Deploy to server
@@ -25,7 +25,10 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            mkdir -p ~/app
+            if [ -d ~/app/.git ]; then
+              git -C ~/app pull
+            else
+              git clone https://github.com/${{ github.repository }}.git ~/app
+            fi
             cd ~/app
-            git pull || git clone https://github.com/<user>/<repo>.git .
             docker compose up -d --build
