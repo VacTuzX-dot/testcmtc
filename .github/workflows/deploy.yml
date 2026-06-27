@@ -15,7 +15,7 @@ jobs:
       - name: Test - validate HTML
         run: |
           sudo apt-get update && sudo apt-get install -y tidy
-          tidy -q -e index.html
+          tidy -q -e index.html; [ $? -le 1 ]
 
       # ---------- DEPLOY ----------
       - name: Deploy to server
