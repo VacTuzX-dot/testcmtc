@@ -7,17 +7,17 @@ Lab project สอน Docker + Docker Compose + GitHub Actions CI/CD — deploy 
 ## 1. ภาพรวมสถาปัตยกรรม
 
 ```
-┌─────────────┐   git push    ┌──────────────────┐   SSH    ┌─────────────────────┐
-│  Local /    │ ────────────> │  GitHub Actions   │ ───────> │   Server (Linux)    │
-│  GitHub repo│                │  (CI/CD pipeline) │          │   Docker Engine     │
-└─────────────┘                └──────────────────┘          └─────────┬───────────┘
-                                                                          │ docker compose up -d --build
-                                                                          ▼
-                                                              ┌─────────────────────┐
-                                                              │ container: student01_web │
-                                                              │ image: nginx:alpine  │
-                                                              │ port 9834 → 80       │
-                                                              └─────────────────────┘
+┌─────────────┐  git push  ┌───────────────────────────────────────┐   SSH    ┌─────────────────────┐
+│  Local /    │ ─────────> │  GitHub Actions: build > test > deploy │ ───────> │   Server (Linux)    │
+│  GitHub repo│            │  (3 jobs, ต่อกันด้วย needs:)            │          │   Docker Engine     │
+└─────────────┘            └───────────────────────────────────────┘          └─────────┬───────────┘
+                                                                                          │ docker compose up -d --build
+                                                                                          ▼
+                                                                              ┌─────────────────────┐
+                                                                              │ container: student01_web │
+                                                                              │ image: nginx:alpine  │
+                                                                              │ port 9834 → 80       │
+                                                                              └─────────────────────┘
 ```
 
 **ส่วนประกอบ:**
@@ -96,18 +96,33 @@ networks:
 
 Trigger: ทุกครั้งที่ `git push` เข้า branch `main`
 
-### Step 1 — Checkout
-ดึง source code ล่าสุดเข้า runner ของ GitHub Actions
+Pipeline แยกเป็น **3 jobs อิสระ** ต่อกันด้วย `needs:` — แต่ละ job รันบน runner (VM) คนละตัว ล้วนๆ ไม่แชร์ filesystem กัน ดังนั้นทุก job ต้อง `actions/checkout@v4` ของตัวเอง:
 
-### Step 2 — Test (validate HTML)
+```
+┌─────────┐  needs   ┌─────────┐  needs   ┌──────────┐
+│  build  │ ───────> │  test   │ ───────> │  deploy  │
+└─────────┘          └─────────┘          └──────────┘
+Dockerfile ผิด?      HTML ผิด syntax?     SSH เข้า server
+หยุดตรงนี้            หยุดตรงนี้             build จริง + รัน container
+```
+
+**ทำไมต้องแยก 3 job แทนที่จะรวมเป็นก้อนเดียว:** ถ้า job ไหน fail — job ถัดไปที่ `needs:` มันจะ**ไม่รันเลย** เช่น Dockerfile เขียนผิดจนสร้าง image ไม่ได้ → `test` และ `deploy` จะไม่ทำงาน ไม่เสียเวลา SSH เข้า server ไปเจอ error ทีหลัง (fail fast)
+
+### Job 1 — `build`
+```bash
+docker build -t app-web:${{ github.sha }} .
+```
+Build image จาก [`Dockerfile`](Dockerfile) บน GitHub runner เพื่อยืนยันว่า Dockerfile ถูกต้อง สร้าง image ได้จริง ก่อนจะไปแตะ server เลย — **ไม่ได้ push image ไปไหน** แค่ validate เท่านั้น (image ที่รันจริงบน server จะถูก build ซ้ำอีกทีใน job `deploy`)
+
+### Job 2 — `test` (validate HTML)
 ```bash
 sudo apt-get update && sudo apt-get install -y tidy
 tidy -q -e index.html; [ $? -le 1 ]
 ```
-รัน `tidy` เช็ค syntax ของ `index.html` — ยอมให้ผ่านถ้า exit code ≤ 1 (warning ผ่านได้ แต่ error จริงจะ fail)
+รัน `tidy` เช็ค syntax ของ `index.html` — ยอมให้ผ่านถ้า exit code ≤ 1 (warning ผ่านได้ แต่ error จริงจะ fail) รันหลังจาก `build` ผ่านแล้วเท่านั้น (`needs: build`)
 
-### Step 3 — Deploy (SSH เข้า server)
-ใช้ action `appleboy/ssh-action` SSH เข้า server ด้วย credential ใน **GitHub Secrets**:
+### Job 3 — `deploy` (SSH เข้า server)
+ใช้ action `appleboy/ssh-action` SSH เข้า server ด้วย credential ใน **GitHub Secrets** — รันหลังจาก `test` ผ่านแล้วเท่านั้น (`needs: test`):
 
 | Secret | ใช้ทำอะไร |
 |---|---|
@@ -254,3 +269,4 @@ docker network ls
 4. **Group membership ใน Linux ไม่ refresh แบบ real-time** — ต้อง re-login session ถึงจะมีผล (เป็นกับดักที่เจอบ่อยมาก)
 5. **`ports:` vs reverse proxy label** — สองทางเข้าเว็บคนละแบบ เลือกใช้ตามว่ามี reverse proxy (Traefik/Nginx) อยู่หน้า server หรือไม่
 6. **CI/CD pipeline = automate สิ่งที่เคยทำมือ** — validate → SSH → pull → rebuild → restart ทุก push โดยไม่ต้องเข้า server เอง
+7. **แยก job เป็น build/test/deploy + `needs:`** = fail fast — job ที่พังจะบล็อก job ถัดไปไม่ให้รัน ไม่ต้องเสียเวลาไป SSH เข้า server แล้วเจอ error ที่จริงๆ ควรจับได้ตั้งแต่ก่อน build เสร็จ
