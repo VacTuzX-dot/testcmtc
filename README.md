@@ -6,18 +6,11 @@ Lab project สอน Docker + Docker Compose + GitHub Actions CI/CD — deploy 
 
 ## 1. ภาพรวมสถาปัตยกรรม
 
-```
-┌─────────────┐  git push  ┌───────────────────────────────────────┐   SSH    ┌─────────────────────┐
-│  Local /    │ ─────────> │  GitHub Actions: build > test > deploy │ ───────> │   Server (Linux)    │
-│  GitHub repo│            │  (3 jobs, ต่อกันด้วย needs:)            │          │   Docker Engine     │
-└─────────────┘            └───────────────────────────────────────┘          └─────────┬───────────┘
-                                                                                          │ docker compose up -d --build
-                                                                                          ▼
-                                                                              ┌─────────────────────┐
-                                                                              │ container: student01_web │
-                                                                              │ image: nginx:alpine  │
-                                                                              │ port 9834 → 80       │
-                                                                              └─────────────────────┘
+```mermaid
+flowchart LR
+    A["Local /<br/>GitHub repo"] -->|git push| B["GitHub Actions<br/>build → test → deploy<br/>(3 jobs, ต่อกันด้วย needs:)"]
+    B -->|SSH| C["Server (Linux)<br/>Docker Engine"]
+    C -->|"docker compose up -d --build"| D["container: student01_web<br/>image: nginx:alpine<br/>port 9834 → 80"]
 ```
 
 **ส่วนประกอบ:**
@@ -107,12 +100,10 @@ Trigger: ทุกครั้งที่ `git push` เข้า branch `main`
 
 Pipeline แยกเป็น **3 jobs อิสระ** ต่อกันด้วย `needs:` — แต่ละ job รันบน runner (VM) คนละตัว ล้วนๆ ไม่แชร์ filesystem กัน ดังนั้นทุก job ต้อง `actions/checkout@v4` ของตัวเอง:
 
-```
-┌─────────┐  needs   ┌─────────┐  needs   ┌──────────┐
-│  build  │ ───────> │  test   │ ───────> │  deploy  │
-└─────────┘          └─────────┘          └──────────┘
-Dockerfile ผิด?      HTML ผิด syntax?     SSH เข้า server
-หยุดตรงนี้            หยุดตรงนี้             build จริง + รัน container
+```mermaid
+flowchart LR
+    build["build<br/>Dockerfile ผิด?<br/>หยุดตรงนี้"] -->|needs| test["test<br/>HTML ผิด syntax?<br/>หยุดตรงนี้"]
+    test -->|needs| deploy["deploy<br/>SSH เข้า server<br/>build จริง + รัน container"]
 ```
 
 **ทำไมต้องแยก 3 job แทนที่จะรวมเป็นก้อนเดียว:** ถ้า job ไหน fail — job ถัดไปที่ `needs:` มันจะ**ไม่รันเลย** เช่น Dockerfile เขียนผิดจนสร้าง image ไม่ได้ → `test` และ `deploy` จะไม่ทำงาน ไม่เสียเวลา SSH เข้า server ไปเจอ error ทีหลัง (fail fast)
