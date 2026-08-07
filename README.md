@@ -30,6 +30,8 @@ docker ps
 
 **5. เปิดเว็บ**: `http://<PUBLIC_IP>:9834`
 
+**สอนเพื่อน?** ก็อป [`docker-compose.template.yml`](docker-compose.template.yml) ไปแทน `docker-compose.yml` ของตัวเอง แก้แค่เลขนักศึกษา 2 จุดตามในไฟล์
+
 ติดปัญหา? ดู [docs/06-troubleshooting.md](docs/06-troubleshooting.md) — มีคำตอบของ error ที่เจอบ่อยที่สุดครบแล้ว
 
 ---

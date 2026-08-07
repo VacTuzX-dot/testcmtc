@@ -1,0 +1,32 @@
+# ============================================================
+# TEMPLATE — ก็อปไฟล์นี้ไปทับ docker-compose.yml ในโปรเจกต์ของตัวเอง
+#
+# แก้แค่ 2 จุด (หาคำว่า XX แล้วแทนด้วยเลขนักศึกษา 2 หลักของตัวเอง):
+#   1. container_name  → studentXX_web
+#   2. ports            → "99XX:80"
+#
+# ตัวอย่าง นักศึกษาคนที่ 5:
+#   container_name: student05_web
+#   ports: "9905:80"
+#
+# ⚠️ ห้ามใช้เลขซ้ำเพื่อน — แต่ละคนได้ port ไม่ซ้ำกันอยู่แล้วถ้าใช้เลขนักศึกษาตัวเอง
+#    (พิสูจน์แล้วว่าช่วง 9901-9940 ว่างทั้งหมดบน server 49.229.108.152)
+# ============================================================
+
+services:
+  web:
+    build: .
+    container_name: studentXX_web            # <-- แก้ตรงนี้
+    restart: unless-stopped
+    ports:
+      - "99XX:80"                            # <-- แก้ตรงนี้
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.studentXX.rule=Host(`studentXX-lab.cmtc.ac.th`)
+      - traefik.http.services.studentXX.loadbalancer.server.port=80
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
