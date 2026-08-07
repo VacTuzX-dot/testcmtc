@@ -4,6 +4,36 @@ Lab project สอน Docker + Docker Compose + GitHub Actions CI/CD — deploy 
 
 ---
 
+## TL;DR — เริ่มใช้งานเร็ว
+
+ทำ 5 ขั้นนี้ก็ deploy ได้เลย เหตุผล/รายละเอียดของแต่ละขั้นอยู่ในหัวข้อด้านล่าง (เปิดอ่านตอนอยากรู้ลึกพอ)
+
+**1. ตั้ง GitHub Secrets** — repo → Settings → Secrets and variables → Actions:
+`SERVER_IP`, `SERVER_USER`, `SERVER_PASSWORD`
+
+**2. เตรียม server** (ทำครั้งเดียว):
+```bash
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker $USER && exit   # ต้อง SSH เข้าใหม่หลังจากนี้
+docker network create web
+```
+
+**3. Push โค้ด** — pipeline รันเอง (build → test → deploy):
+```bash
+git push origin main
+```
+
+**4. เช็คผล** — tab **Actions** บน GitHub หรือ:
+```bash
+docker ps
+```
+
+**5. เปิดเว็บ**: `http://<PUBLIC_IP>:9834`
+
+ติดปัญหา? ดูหัวข้อ **6. ปัญหาที่เจอจริงระหว่าง lab นี้** ด้านล่าง — มีคำตอบของ error ที่เจอบ่อยที่สุดครบแล้ว
+
+---
+
 ## 1. ภาพรวมสถาปัตยกรรม
 
 ```mermaid
