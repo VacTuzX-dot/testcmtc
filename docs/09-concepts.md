@@ -9,4 +9,4 @@
 7. **แยก job เป็น build/test/deploy + `needs:`** = fail fast — job ที่พังจะบล็อก job ถัดไปไม่ให้รัน ไม่ต้องเสียเวลาไป SSH เข้า server แล้วเจอ error ที่จริงๆ ควรจับได้ตั้งแต่ก่อน build เสร็จ
 
 ---
-[← Cheat Sheet](08-cheatsheet.md) | [กลับ README](../README.md)
+[← Cheat Sheet](08-cheatsheet.md) | [กลับ README](../README.md) | [ถัดไป: Port Assignment Sheet →](10-port-assignments.md)

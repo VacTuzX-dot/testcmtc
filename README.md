@@ -51,6 +51,7 @@ docker ps
 | 7 | [HTTPS](docs/07-https.md) | ทำไมยังไม่มี HTTPS และทำต่อยังไง |
 | 8 | [Cheat Sheet](docs/08-cheatsheet.md) | คำสั่ง docker ที่ใช้บ่อย |
 | 9 | [สรุป Concept](docs/09-concepts.md) | concept สำคัญ สรุปให้สอนเพื่อนต่อได้ |
+| 10 | [Port Assignment Sheet](docs/10-port-assignments.md) | ตาราง port/container name สำหรับเพื่อน 37 คน กันชนกัน |
 
 ---
 
