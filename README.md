@@ -24,10 +24,12 @@ Lab project สอน Docker + Docker Compose + GitHub Actions CI/CD — deploy 
 
 | ไฟล์ | หน้าที่ |
 |---|---|
-| [`index.html`](index.html) | หน้าเว็บ static (ไม่มี backend) |
+| [`index.html`](index.html) | หน้าเว็บ static (ไม่มี backend) — status dashboard ของวิชา แสดงการ์ด Docker/Compose/CI-CD/Nginx/Registry/Monitoring พร้อม badge Done/Active/Planned |
 | [`Dockerfile`](Dockerfile) | สร้าง image: เอา nginx + copy ไฟล์ static เข้าไป |
 | [`docker-compose.yml`](docker-compose.yml) | สั่งรัน container, ตั้ง port, network, restart policy |
 | [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) | Pipeline: validate HTML → SSH เข้า server → pull code → build → deploy |
+
+**⚠️ badge ใน index.html เป็น static text ไม่ sync กับ repo จริง** — ตอนนี้การ์ด "CI/CD Pipeline" ยังโชว์ badge **Planned** ทั้ง item เป็น **todo** หมด ทั้งที่ pipeline 3-job (`build`/`test`/`deploy`) ทำงานจริงแล้ว — อย่าเชื่อ badge บนหน้าเว็บว่าตรงกับสถานะจริงของ repo ต้องเช็คจาก [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) เอง
 
 ---
 
@@ -53,6 +55,13 @@ COPY . /usr/share/nginx/html
 .github
 README.md
 docker-compose.yml
+```
+
+**เช็คก่อน push จริง — build/run local**
+```bash
+docker build -t test .
+docker run -p 8080:80 test
+# เปิด http://localhost:8080 เช็คก่อนดันขึ้น server จริง — ไม่ต้องรอ CI/CD ทุกครั้งที่แก้ CSS
 ```
 
 ---
@@ -108,6 +117,8 @@ Dockerfile ผิด?      HTML ผิด syntax?     SSH เข้า server
 
 **ทำไมต้องแยก 3 job แทนที่จะรวมเป็นก้อนเดียว:** ถ้า job ไหน fail — job ถัดไปที่ `needs:` มันจะ**ไม่รันเลย** เช่น Dockerfile เขียนผิดจนสร้าง image ไม่ได้ → `test` และ `deploy` จะไม่ทำงาน ไม่เสียเวลา SSH เข้า server ไปเจอ error ทีหลัง (fail fast)
 
+*หมายเหตุ: `test` ไม่ได้พึ่ง output ของ `build` จริงๆ (validate HTML ไม่เกี่ยว Docker image) — รันขนานกันได้ถ้าอยากให้ pipeline เร็วขึ้น แต่ lab นี้ตั้งใจรัน sequential ตามลำดับ build > test > deploy เพื่อความชัดเจนตอนสอน*
+
 ### Job 1 — `build`
 ```bash
 docker build -t app-web:${{ github.sha }} .
@@ -146,6 +157,8 @@ docker compose up -d --build
 
 `docker compose up -d --build` = build image ใหม่ + รัน container แบบ background (`-d`) แทนที่ตัวเก่า
 
+⚠️ **มี downtime สั้นๆ ทุกครั้งที่ deploy** — container เก่าถูก stop ก่อน container ใหม่จะพร้อม (ไม่ใช่ zero-downtime deploy) สำหรับ lab นี้ไม่กระทบอะไร แต่เป็น concept ที่ต้องรู้ก่อนเอาไปใช้ production จริง
+
 **จุดสำคัญด้าน security — ทำไมต้อง `remote set-url` สองรอบ:**
 
 `${{ github.token }}` คือ token ชั่วคราวที่ GitHub Actions ออกให้เอง อายุสั้น (หมดอายุเมื่อ job จบ) สคริปต์ทำ:
@@ -161,6 +174,8 @@ docker compose up -d --build
 ### บน GitHub (ครั้งเดียว)
 1. ไปที่ repo → **Settings → Secrets and variables → Actions**
 2. เพิ่ม secret 3 ตัว: `SERVER_IP`, `SERVER_USER`, `SERVER_PASSWORD`
+
+⚠️ lab นี้ใช้ **password auth** ผ่าน secret — ใช้งานได้แต่อ่อนกว่า SSH key จริง production ควรเปลี่ยนเป็น key-based auth + ปิด `PasswordAuthentication` ใน sshd_config
 
 ### บน Server (ครั้งเดียว)
 
@@ -184,6 +199,7 @@ exit
 groups        # ต้องเห็น docker ในลิสต์ของ session ปัจจุบัน
 docker ps     # ต้องไม่ error
 ```
+⚠️ **`docker` group = root-equivalent** — user ใน group นี้ mount host `/` ผ่าน container ได้ (`docker run -v /:/host ...`) เท่ากับมี root บนเครื่องจริง โอเคสำหรับ lab ส่วนตัว **ห้ามทำแบบนี้บน shared/prod server** โดยไม่รู้ตัว
 
 **b. สร้าง external network ที่ docker-compose.yml ต้องการ**
 ```bash
