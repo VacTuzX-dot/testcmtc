@@ -12,16 +12,17 @@ Docker image สร้างเป็น "ชั้น" (layer) ทับกั�
 
 ไม่มี build step อื่นเพราะเป็น static site ล้วนๆ (ไม่มี npm build, ไม่มี backend compile, ไม่มี dependency ต้อง install)
 
-**⚠️ Best practice ที่ยังไม่ได้ทำในโปรเจกต์นี้ — `.dockerignore`**
+**🔴 เคยเป็นช่องโหว่จริง — `.dockerignore` มีอยู่แล้วแต่ไม่ครบ**
 
-`COPY .` copy **ทุกไฟล์ในโฟลเดอร์** เข้า image รวมถึง `.git/`, `.github/`, `README.md`, `docker-compose.yml` ที่ไม่จำเป็นต้องอยู่ใน image เลย ทำให้ image ใหญ่ขึ้นโดยไม่จำเป็นและหลุดข้อมูล repo metadata เข้าไปด้วย
-
-แก้โดยสร้างไฟล์ `.dockerignore` (เพื่อนที่ทำ lab ต่อควรเพิ่มเอง):
+`COPY .` copy **ทุกไฟล์ในโฟลเดอร์** เข้า image ยกเว้นที่ list ไว้ใน [`.dockerignore`](../.dockerignore) ก่อนหน้านี้ไฟล์นั้น**ไม่ได้กัน** `.git/`, `README.md`, `docs/` ไว้ — ผลคือ `.git/` (ประวัติ commit ทั้งหมด) กับเอกสารทุกไฟล์ถูก serve ออกทาง URL จริงบน production (เจอผ่าน `curl http://<IP>:9834/.git/config` ได้ HTTP 200) ตอนนี้แก้แล้ว ไฟล์ปัจจุบันกันครบ:
 ```
 .git
 .github
-README.md
 docker-compose.yml
+Dockerfile
+.dockerignore
+README.md
+docs
 ```
 
 **เช็คก่อน push จริง — build/run local**
